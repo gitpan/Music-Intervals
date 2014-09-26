@@ -63,7 +63,7 @@
          "web" : "https://github.com/ology/Music-Intervals"
       }
    },
-   "version" : "0.0102",
+   "version" : "0.0103",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.021002"

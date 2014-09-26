@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0102';
+our $VERSION = '0.0103';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -24,7 +24,6 @@ has equalt    => ( is => 'ro', default => sub { 0 } );
 has freqs     => ( is => 'ro', default => sub { 0 } );
 has interval  => ( is => 'ro', default => sub { 0 } );
 has justin    => ( is => 'ro', default => sub { 0 } );
-has numeric   => ( is => 'ro', default => sub { 0 } );
 has prime     => ( is => 'ro', default => sub { 0 } );
 has rootless  => ( is => 'ro', default => sub { 0 } );
 has octave    => ( is => 'ro', default => sub { 4 } );
@@ -210,12 +209,22 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0102
+version 0.0103
 
 =head1 SYNOPSIS
 
   use Music::Intervals;
-  $m = Music::Intervals->new(%arguments);
+  $m = Music::Intervals->new(
+    notes => [qw( C E G B )],
+    size => 3,
+    chords => 1,
+    justin => 1,
+    equalt => 1,
+    freqs => 1,
+    interval => 1,
+    cents => 1,
+    prime => 1,
+  );
   $m->process;
   # Then print Dumper any of:
   $m->chord_names;
@@ -232,7 +241,10 @@ version 0.0102
 A C<Music::Intervals> object shows the mathematical break-down of musical
 intervals and chords.
 
-* More to come...
+This module reveals the "guts" of chords within a given tonality.  By guts I
+mean, the measurements of the notes and the intervals between them.  Both just
+intonation (ratio) and equal temperament (decimal) are handled, with over 400
+intervals, too!
 
 =head1 METHODS
 
@@ -244,43 +256,66 @@ intervals and chords.
 
 =over
 
-=item cents: 0
+=item cents: 0 - divisions of the octave
 
-=item chords: 0
+=item chords: 0 - chord names
 
-=item equalt: 0
+=item equalt: 0 - equal temperament
 
-=item freqs: 0
+=item freqs: 0 - frequencies
 
-=item interval: 0
+=item interval: 0 - note intervals
 
-=item justin: 0
+=item justin: 0 - just intonation
 
-=item numeric: 0
+=item prime: 0 - prime factorization
 
-=item prime: 0
+=item rootless: 0 - show chord names with no root
 
-=item rootless: 0
+=item octave: 4 - use the fourth octave
 
-=item octave: 4
+=item concert: 440 - concert pitch
 
-=item concert: 440
+=item size: 3 - chord size
 
-=item size: 3
+=item tonic: C - root of the computations
 
-=item tonic: C
+* Currently (and for the foreseeable future) this will remain the only value
+that produces sane results.
 
-=item semitones: 12
+=item semitones: 12 - number of notes in the scale
 
-=item temper: semitones * 100 / log(2)
+=item temper: semitones * 100 / log(2) - physical distance between notes
 
-=item notes: [ C D E F G A B ]
+=item notes: [ C D E F G A B ] - actual notes to use in the computation
+
+The list of notes may be any of the keys in the L<Music::Intervals::Ratios>
+C<ratio> hashref.  This is very very long and contains useful intervals such as
+those of the common scale and even the Pythagorean intervals, too.
+
+A few examples:
+
+ [qw( C E G )]
+ [qw( C pM3 pM7 )]
+ [qw( C D D\# )]
+ [qw( C D Eb )]
+ [qw( C D D\# Eb E E\# Fb F )]
+ [qw( C 11h 7h )]
 
 =back
 
 =head1 SEE ALSO
 
+For the time being, you will need to look at the source of
+C<Music::Intervals::Ratios> for the note and interval names.
+
 L<https://github.com/ology/Music/blob/master/intervals>
+
+L<http://en.wikipedia.org/wiki/List_of_musical_intervals>
+
+L<http://en.wikipedia.org/wiki/Equal_temperament>
+
+L<http://en.wikipedia.org/wiki/Just_intonation>
 
 =head1 AUTHOR
 
