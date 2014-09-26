@@ -57,13 +57,13 @@
          "mailto" : "bug-Music-Intervals@rt.cpan.org",
          "web" : "https://rt.cpan.org/Public/Dist/Display.html?Name=Music-Intervals"
       },
-      "homepage" : "http://search.cpan.org/dist/Music-Intervals",
+      "homepage" : "https://metacpan.org/release/Music-Intervals",
       "repository" : {
          "type" : "git",
-         "web" : "https://github.com/ology/REPO/tree/master/{{$dist->name}}"
+         "web" : "https://github.com/ology/Music-Intervals"
       }
    },
-   "version" : "0.0101",
+   "version" : "0.0102",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.021002"

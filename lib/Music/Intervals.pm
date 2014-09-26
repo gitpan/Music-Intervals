@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0101';
+our $VERSION = '0.0102';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -210,22 +210,22 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0101
+version 0.0102
 
 =head1 SYNOPSIS
 
   use Music::Intervals;
-  $x = Music::Intervals->new(%arguments);
-  $x->process;
-  # Then:
-  $x->chord_names;
-  $x->natural_frequencies;
-  $x->natural_intervals;
-  $x->natural_cents;
-  $x->natural_prime_factors;
-  $x->eq_tempered_frequencies;
-  $x->eq_tempered_intervals;
-  $x->eq_tempered_cents;
+  $m = Music::Intervals->new(%arguments);
+  $m->process;
+  # Then print Dumper any of:
+  $m->chord_names;
+  $m->natural_frequencies;
+  $m->natural_intervals;
+  $m->natural_cents;
+  $m->natural_prime_factors;
+  $m->eq_tempered_frequencies;
+  $m->eq_tempered_intervals;
+  $m->eq_tempered_cents;
 
 =head1 DESCRIPTION
 
