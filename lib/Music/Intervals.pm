@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -47,7 +47,11 @@ has _ratio_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     return { map { $_ => $Music::Intervals::Ratios::ratio->{$_}{ratio} } @{ $self->notes } } },
 );
 has _ratio_name_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
-    return { map { $Music::Intervals::Ratios::ratio->{$_}{ratio} => $Music::Intervals::Ratios::ratio->{$_}{name} } keys %$Music::Intervals::Ratios::ratio } },
+    return {
+        map { $Music::Intervals::Ratios::ratio->{$_}{ratio} => {
+            key  => $_,
+            name => $Music::Intervals::Ratios::ratio->{$_}{name} }
+        } keys %$Music::Intervals::Ratios::ratio } },
 );
 
 has chord_names => ( is => 'rw', default => sub { {} } );
@@ -94,7 +98,7 @@ sub process
                 $self->natural_intervals->{"@$c"} = {
                     map {
                         $_ => {
-                            $dyads{$_}->{natural} => $self->_ratio_name_index->{ $dyads{$_}->{natural} }
+                            $dyads{$_}->{natural} => $self->_ratio_name_index->{ $dyads{$_}->{natural} }{name}
                         }
                     } keys %dyads
                 };
@@ -194,10 +198,17 @@ sub ratio_factorize {
 }
 
 
-sub ratio
+sub by_name
 {
     my ( $self, $name ) = @_;
     return $Music::Intervals::Ratios::ratio->{$name};
+}
+
+
+sub by_ratio
+{
+    my ( $self, $ratio ) = @_;
+    return $self->_ratio_name_index->{$ratio};
 }
 
 1;
@@ -214,7 +225,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -241,8 +252,9 @@ version 0.02
   $m->eq_tempered_intervals;
   $m->eq_tempered_cents;
 
-  # Show a known interval
-  $ratio = $m->ratio($interval_name);
+  # Find known intervals
+  $name = $m->by_ratio($ratio);
+  $ratio = $m->by_name($interval_name);
 
   # Show all the known intervals (the "notes" attribute above):
   perl -MData::Dumper -MMusic::Intervals::Ratios -e'print Dumper $Music::Intervals::Ratios::ratio'
@@ -334,12 +346,18 @@ means minor.
 
 =back
 
-=head2 ratio()
+=head2 by_name()
 
- $ratio = $m->ratio('C');
+ $ratio = $m->by_name('C');
  # { ratio => '1/1', name => 'unison, perfect prime, tonic' }
 
 Return a known ratio or undef.
+
+=head2 by_ratio()
+
+ $name = $m->by_ratio($ratio);
+
+Return a known ratio name or undef.
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
 package Music::Intervals::Ratios;
-$Music::Intervals::Ratios::VERSION = '0.02';
+$Music::Intervals::Ratios::VERSION = '0.03';
 BEGIN {
   $Music::Intervals::Ratios::AUTHORITY = 'cpan:GENE';
 }
@@ -1651,7 +1651,7 @@ Music::Intervals::Ratios
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 AUTHOR
 
