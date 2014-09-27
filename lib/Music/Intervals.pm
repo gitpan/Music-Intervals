@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0103';
+our $VERSION = '0.02';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -155,16 +155,13 @@ sub dyads
     my $self = shift;
     my ($c) = @_;
 
-    my $n = $self->_note_index;
-    my $r = $self->_ratio_index;
-
     my @pairs = combinations( $c, 2 );
 
     my %dyads;
     for my $i (@pairs) {
         # Construct our "dyadic" fraction.
-        my $numerator   = Number::Fraction->new( $r->{ $i->[1] } );
-        my $denominator = Number::Fraction->new( $r->{ $i->[0] } );
+        my $numerator   = Number::Fraction->new( $self->_ratio_index->{ $i->[1] } );
+        my $denominator = Number::Fraction->new( $self->_ratio_index->{ $i->[0] } );
         my $fraction = $numerator / $denominator;
 
         # Calculate both natural and equal temperament values for our ratio.
@@ -172,8 +169,9 @@ sub dyads
             natural => $fraction->to_string(),
             # The value is either the known pitch ratio or the numerical evaluation of the fraction.
             eq_tempered =>
-              ( name2freq( $i->[1] . $self->octave ) || $n->{ $i->[1] } ) /
-              ( name2freq( $i->[0] . $self->octave ) || $n->{ $i->[0] } ),
+              ( name2freq( $i->[1] . $self->octave ) || $self->_note_index->{ $i->[1] } )
+                /
+              ( name2freq( $i->[0] . $self->octave ) || $self->_note_index->{ $i->[0] } ),
         };
     }
 
@@ -195,6 +193,13 @@ sub ratio_factorize {
         );
 }
 
+
+sub ratio
+{
+    my ( $self, $name ) = @_;
+    return $Music::Intervals::Ratios::ratio->{$name};
+}
+
 1;
 
 __END__
@@ -209,7 +214,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0103
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -235,6 +240,12 @@ version 0.0103
   $m->eq_tempered_frequencies;
   $m->eq_tempered_intervals;
   $m->eq_tempered_cents;
+
+  # Show a known interval
+  $ratio = $m->ratio($interval_name);
+
+  # Show all the known intervals (the "notes" attribute above):
+  perl -MData::Dumper -MMusic::Intervals::Ratios -e'print Dumper $Music::Intervals::Ratios::ratio'
 
 =head1 DESCRIPTION
 
@@ -295,14 +306,40 @@ those of the common scale and even the Pythagorean intervals, too.
 
 A few examples:
 
- [qw( C E G )]
- [qw( C pM3 pM7 )]
- [qw( C D D\# )]
- [qw( C D Eb )]
- [qw( C D D\# Eb E E\# Fb F )]
- [qw( C 11h 7h )]
+ * [qw( C E G )]
+ * [qw( C D D# )]
+ * [qw( C D Eb )]
+ * [qw( C D D# Eb E E# Fb F )]
+ * [qw( C 11h 7h )]
+ * [qw( C pM3 pM7 )]
+
+For natural_intervals() this example produces the following:
+
+ 'C pM3 pM7' => {
+   'C pM3' => { '81/64' => 'Pythagorean major third' },
+   'C pM7' => { '243/128' => 'Pythagorean major seventh' },
+   'pM3 pM7' => { '3/2' => 'perfect fifth' }
+ }
+
+For eq_tempered_cents() this is:
+
+ 'C pM3 pM7' => {
+   'pM3 pM7' => '701.955000865387',
+   'C pM7' => '-8527.85665190266',
+   'C pM3' => '-9229.81165276804'
+ }
+
+Note that case matters for interval names.  For example, "M" means major and "m"
+means minor.
 
 =back
+
+=head2 ratio()
+
+ $ratio = $m->ratio('C');
+ # { ratio => '1/1', name => 'unison, perfect prime, tonic' }
+
+Return a known ratio or undef.
 
 =head1 SEE ALSO
 
