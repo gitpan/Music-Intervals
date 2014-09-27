@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.03';
+our $VERSION = '0.0301';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -49,8 +49,8 @@ has _ratio_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
 has _ratio_name_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     return {
         map { $Music::Intervals::Ratios::ratio->{$_}{ratio} => {
-            key  => $_,
-            name => $Music::Intervals::Ratios::ratio->{$_}{name} }
+            symbol => $_,
+            name   => $Music::Intervals::Ratios::ratio->{$_}{name} }
         } keys %$Music::Intervals::Ratios::ratio } },
 );
 
@@ -225,7 +225,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.03
+version 0.0301
 
 =head1 SYNOPSIS
 

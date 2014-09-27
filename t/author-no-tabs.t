@@ -16,6 +16,7 @@ use Test::NoTabs;
 
 my @files = (
     'lib/Music/Intervals.pm',
+    'lib/Music/Intervals/Ratio.pm',
     'lib/Music/Intervals/Ratios.pm',
     't/00-compile.t',
     't/00-load.t',
