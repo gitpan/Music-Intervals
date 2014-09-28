@@ -9,11 +9,13 @@ README
 README.md
 dist.ini
 lib/Music/Intervals.pm
+lib/Music/Intervals/Numeric.pm
 lib/Music/Intervals/Ratio.pm
 lib/Music/Intervals/Ratios.pm
 t/00-compile.t
 t/00-load.t
 t/01-methods.t
+t/02-numeric-methods.t
 t/author-no-tabs.t
 t/author-pod-spell.t
 t/release-eol.t

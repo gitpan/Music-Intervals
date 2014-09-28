@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0301';
+our $VERSION = '0.04';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -225,7 +225,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0301
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -363,6 +363,8 @@ Return a known ratio name or undef.
 
 For the time being, you will need to look at the source of
 C<Music::Intervals::Ratios> for the note and interval names.
+
+L<Music::Intervals::Numeric> for numeric-only note-intervals
 
 L<https://github.com/ology/Music/blob/master/intervals>
 
