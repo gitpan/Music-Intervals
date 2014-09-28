@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.0101';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -16,8 +16,8 @@ use Music::Intervals::Ratio;
 
 
 has notes     => ( is => 'ro', default => sub { [] } );
-has cents     => ( is => 'ro', default => sub { 0 } );
-has freqs     => ( is => 'ro', default => sub { 0 } );
+has cent     => ( is => 'ro', default => sub { 0 } );
+has freq     => ( is => 'ro', default => sub { 0 } );
 has interval  => ( is => 'ro', default => sub { 0 } );
 has prime     => ( is => 'ro', default => sub { 0 } );
 has size      => ( is => 'ro', default => sub { 3 } );
@@ -26,10 +26,10 @@ has temper    => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     $self->semitones * 100 / log(2) },
 );
 
-has natural_frequencies => ( is => 'rw', default => sub { {} } );
-has natural_intervals => ( is => 'rw', default => sub { {} } );
-has natural_cents => ( is => 'rw', default => sub { {} } );
-has natural_prime_factors => ( is => 'rw', default => sub { {} } );
+has frequencies => ( is => 'rw', default => sub { {} } );
+has intervals => ( is => 'rw', default => sub { {} } );
+has cent_vals => ( is => 'rw', default => sub { {} } );
+has prime_factor => ( is => 'rw', default => sub { {} } );
 
 sub process
 {
@@ -42,14 +42,14 @@ sub process
     {
         my %dyads = $self->dyads($c);
 
-        if ( $self->freqs )
+        if ( $self->freq )
         {
-            $self->natural_frequencies->{"@$c"} =
+            $self->frequencies->{"@$c"} =
                 { map { $_ => $Music::Intervals::Ratio::ratio->{$_} } @$c };
         }
         if ( $self->interval )
         {
-            $self->natural_intervals->{"@$c"} = {
+            $self->intervals->{"@$c"} = {
                 map {
                     $_ => {
                         $dyads{$_} => $Music::Intervals::Ratio::ratio->{ $dyads{$_} }
@@ -58,9 +58,9 @@ sub process
             };
 
         }
-        if ( $self->cents )
+        if ( $self->cent )
         {
-            $self->natural_cents->{"@$c"} = {
+            $self->cent_vals->{"@$c"} = {
                 map {
                     $_ => log( eval $dyads{$_} ) * $self->temper
                 } keys %dyads };
@@ -68,7 +68,7 @@ sub process
         }
         if ( $self->prime )
         {
-            $self->natural_prime_factors->{"@$c"} = {
+            $self->prime_factor->{"@$c"} = {
                 map {
                     $_ => {
                         $dyads{$_} => scalar ratio_factorize( $dyads{$_} )
@@ -93,7 +93,6 @@ sub dyads
         my $denominator = Number::Fraction->new( $i->[0] );
         my $fraction = $numerator / $denominator;
 
-        # Calculate natural temperament values for our ratio.
         $dyads{"@$i"} = $fraction->to_string();
     }
 
@@ -129,7 +128,7 @@ Music::Intervals::Numeric - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.04
+version 0.0401
 
 =head1 SYNOPSIS
 
@@ -137,17 +136,17 @@ version 0.04
   $m = Music::Intervals::Numeric->new(
     notes => [qw( 1/1 5/4 3/2 15/8 )],
     size => 3,
-    freqs => 1,
+    freq => 1,
     interval => 1,
-    cents => 1,
+    cent => 1,
     prime => 1,
   );
   $m->process;
   # Then print Dumper any of:
-  $m->natural_frequencies;
-  $m->natural_intervals;
-  $m->natural_cents;
-  $m->natural_prime_factors;
+  $m->frequencies;
+  $m->intervals;
+  $m->cent_vals;
+  $m->prime_factor;
 
   # Show all the known intervals (the "notes" attribute above):
   perl -MData::Dumper -MMusic::Intervals::Ratio -e'print Dumper $Music::Intervals::Ratio::ratio'
@@ -171,9 +170,9 @@ intonation.
 
 =over
 
-=item cents: 0 - divisions of the octave
+=item cent: 0 - divisions of the octave
 
-=item freqs: 0 - frequencies
+=item freq: 0 - frequencies
 
 =item interval: 0 - note intervals
 

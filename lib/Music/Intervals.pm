@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.04';
+our $VERSION = '0.0401';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -130,7 +130,7 @@ sub process
             {
                 $self->eq_tempered_frequencies->{"@$c"} = {
                     map {
-                        $_ => name2freq( $_ . $self->octave ) || eval $self->_ratio_index->{$_}
+                        $_ => name2freq( $_ . $self->octave ) || $self->concert * $self->_note_index->{$_}
                     } @$c
                 };
             }
@@ -173,9 +173,9 @@ sub dyads
             natural => $fraction->to_string(),
             # The value is either the known pitch ratio or the numerical evaluation of the fraction.
             eq_tempered =>
-              ( name2freq( $i->[1] . $self->octave ) || $self->_note_index->{ $i->[1] } )
+              ( name2freq( $i->[1] . $self->octave ) || ( $self->concert * $self->_note_index->{ $i->[1] } ) )
                 /
-              ( name2freq( $i->[0] . $self->octave ) || $self->_note_index->{ $i->[0] } ),
+              ( name2freq( $i->[0] . $self->octave ) || ( $self->concert * $self->_note_index->{ $i->[0] } ) ),
         };
     }
 
@@ -225,7 +225,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.04
+version 0.0401
 
 =head1 SYNOPSIS
 
@@ -331,14 +331,6 @@ For natural_intervals() this example produces the following:
    'C pM3' => { '81/64' => 'Pythagorean major third' },
    'C pM7' => { '243/128' => 'Pythagorean major seventh' },
    'pM3 pM7' => { '3/2' => 'perfect fifth' }
- }
-
-For eq_tempered_cents() this is:
-
- 'C pM3 pM7' => {
-   'pM3 pM7' => '701.955000865387',
-   'C pM7' => '-8527.85665190266',
-   'C pM3' => '-9229.81165276804'
  }
 
 Note that case matters for interval names.  For example, "M" means major and "m"

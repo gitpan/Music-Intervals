@@ -32,10 +32,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Music-Intervals
   homepage: https://metacpan.org/release/Music-Intervals
   repository: https://github.com/ology/Music-Intervals
-version: '0.04'
+version: '0.0401'
 x_Dist_Zilla:
   perl:
-    version: '5.021002'
+    version: '5.018001'
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir

@@ -28,5 +28,5 @@ lib
 Music
 Intervals
 Ratio
-Ratios
 Numeric
+Ratios
