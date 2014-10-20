@@ -128,7 +128,7 @@ Music::Intervals::Numeric - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0401
+version 0.0402
 
 =head1 SYNOPSIS
 

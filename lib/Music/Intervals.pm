@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0401';
+our $VERSION = '0.0402';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -83,19 +83,24 @@ sub process
             @chordname = grep { !/no-root/ } @chordname unless $self->rootless;
 
             # Set the names of this chord combination.
-            $self->chord_names->{"@$c"} = \@chordname if @chordname;
+            $self->chord_names->{"@$c chord_names"} = \@chordname if @chordname;
         }
 
         if ( $self->justin )
         {
             if ( $self->freqs )
             {
-                $self->natural_frequencies->{"@$c"} =
-                    { map { $_ => { $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name} } } @$c };
+                $self->natural_frequencies->{"@$c natural_frequencies"} = {
+                    map {
+                        $_ => {
+                            $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name}
+                        }
+                    } @$c
+                };
             }
             if ( $self->interval )
             {
-                $self->natural_intervals->{"@$c"} = {
+                $self->natural_intervals->{"@$c natural_intervals"} = {
                     map {
                         $_ => {
                             $dyads{$_}->{natural} => $self->_ratio_name_index->{ $dyads{$_}->{natural} }{name}
@@ -106,7 +111,7 @@ sub process
             }
             if ( $self->cents )
             {
-                $self->natural_cents->{"@$c"} = {
+                $self->natural_cents->{"@$c natural_cents"} = {
                     map {
                         $_ => log( eval $dyads{$_}->{natural} ) * $self->temper
                     } keys %dyads };
@@ -114,7 +119,7 @@ sub process
             }
             if ( $self->prime )
             {
-                $self->natural_prime_factors->{"@$c"} = {
+                $self->natural_prime_factors->{"@$c natural_prime_factors"} = {
                     map {
                         $_ => {
                             $dyads{$_}->{natural} => scalar ratio_factorize( $dyads{$_}->{natural} )
@@ -128,7 +133,7 @@ sub process
         {
             if ( $self->freqs )
             {
-                $self->eq_tempered_frequencies->{"@$c"} = {
+                $self->eq_tempered_frequencies->{"@$c eq_tempered_frequencies"} = {
                     map {
                         $_ => name2freq( $_ . $self->octave ) || $self->concert * $self->_note_index->{$_}
                     } @$c
@@ -136,7 +141,7 @@ sub process
             }
             if ( $self->interval )
             {
-                $self->eq_tempered_intervals->{"@$c"} = {
+                $self->eq_tempered_intervals->{"@$c eq_tempered_intervals"} = {
                     map {
                         $_ => $dyads{$_}->{eq_tempered}
                     } keys %dyads
@@ -144,7 +149,7 @@ sub process
             }
             if ( $self->cents )
             {
-                $self->eq_tempered_cents->{"@$c"} = {
+                $self->eq_tempered_cents->{"@$c eq_tempered_cents"} = {
                     map {
                         $_ => log( $dyads{$_}->{eq_tempered} ) * $self->temper
                     } keys %dyads
@@ -225,7 +230,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0401
+version 0.0402
 
 =head1 SYNOPSIS
 
@@ -242,15 +247,17 @@ version 0.0401
     prime => 1,
   );
   $m->process;
-  # Then print Dumper any of:
-  $m->chord_names;
-  $m->natural_frequencies;
-  $m->natural_intervals;
-  $m->natural_cents;
-  $m->natural_prime_factors;
-  $m->eq_tempered_frequencies;
-  $m->eq_tempered_intervals;
-  $m->eq_tempered_cents;
+  # Then
+  print Dumper # any of:
+    $m->chord_names,
+    $m->natural_frequencies,
+    $m->natural_intervals,
+    $m->natural_cents,
+    $m->natural_prime_factors,
+    $m->eq_tempered_frequencies,
+    $m->eq_tempered_intervals,
+    $m->eq_tempered_cents,
+  ;
 
   # Find known intervals
   $name = $m->by_ratio($ratio);
@@ -265,9 +272,9 @@ A C<Music::Intervals> object shows the mathematical break-down of musical
 intervals and chords.
 
 This module reveals the "guts" of chords within a given tonality.  By guts I
-mean, the measurements of the notes and the intervals between them.  Both just
-intonation (ratio) and equal temperament (decimal) are handled, with over 400
-intervals, too!
+mean, the measurements of the notes and the intervals between them.
+
+* This module only handles equal temperament for the 12-tone scale only. *
 
 =head1 METHODS
 
@@ -277,7 +284,7 @@ intervals, too!
 
 =head2 Attributes and defaults
 
-=over
+=over 4
 
 =item cents: 0 - divisions of the octave
 

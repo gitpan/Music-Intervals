@@ -27,6 +27,6 @@ gene
 lib
 Music
 Intervals
+Ratios
 Ratio
 Numeric
-Ratios

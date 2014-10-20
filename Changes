@@ -1,6 +1,10 @@
 Revision history for Music-Intervals
 
-0.0401 2014-09-28
+0.0402 2014-10-20
+    - Clarified the limitations of equal temperament with this module.
+    - Added named output, so blocks are labled.
+
+0.04  2014-09-27
     - Added a nearly identical module for numeric-only notes.
 
 0.0301 2014-09-27
