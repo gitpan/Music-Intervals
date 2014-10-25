@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.05';
+our $VERSION = '0.0501';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -241,7 +241,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.05
+version 0.0501
 
 =head1 SYNOPSIS
 
@@ -256,6 +256,7 @@ version 0.05
     interval => 1,
     cents => 1,
     prime => 1,
+    integer => 1,
   );
   $m->process;
   # Then
@@ -268,6 +269,7 @@ version 0.05
     $m->eq_tempered_frequencies,
     $m->eq_tempered_intervals,
     $m->eq_tempered_cents,
+    $m->integer_notation,
   ;
 
   # Find known intervals
@@ -303,11 +305,13 @@ mean, the measurements of the notes and the intervals between them.
 
 =item equalt: 0 - equal temperament
 
+=item justin: 0 - just intonation
+
+=item integer: 0 - integer notation
+
 =item freqs: 0 - frequencies
 
 =item interval: 0 - note intervals
-
-=item justin: 0 - just intonation
 
 =item prime: 0 - prime factorization
 
