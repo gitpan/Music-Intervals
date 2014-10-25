@@ -8,6 +8,7 @@ Makefile.PL
 README
 README.md
 dist.ini
+eg/intervals
 lib/Music/Intervals.pm
 lib/Music/Intervals/Numeric.pm
 lib/Music/Intervals/Ratio.pm
@@ -18,5 +19,4 @@ t/01-methods.t
 t/02-numeric-methods.t
 t/author-no-tabs.t
 t/author-pod-spell.t
-t/release-eol.t
 t/release-pod-syntax.t

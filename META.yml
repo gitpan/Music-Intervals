@@ -32,10 +32,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Music-Intervals
   homepage: https://metacpan.org/release/Music-Intervals
   repository: https://github.com/ology/Music-Intervals
-version: '0.0402'
+version: '0.05'
 x_Dist_Zilla:
   perl:
-    version: '5.018001'
+    version: '5.021002'
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
@@ -213,10 +213,6 @@ x_Dist_Zilla:
             - ':TestFiles'
       name: Test::NoTabs
       version: '0.09'
-    -
-      class: Dist::Zilla::Plugin::EOLTests
-      name: EOLTests
-      version: '0.02'
     -
       class: Dist::Zilla::Plugin::Test::Compile
       config:

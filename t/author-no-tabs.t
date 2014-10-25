@@ -25,7 +25,6 @@ my @files = (
     't/02-numeric-methods.t',
     't/author-no-tabs.t',
     't/author-pod-spell.t',
-    't/release-eol.t',
     't/release-pod-syntax.t'
 );
 

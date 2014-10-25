@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0402';
+our $VERSION = '0.05';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -23,6 +23,7 @@ has chords    => ( is => 'ro', default => sub { 0 } );
 has equalt    => ( is => 'ro', default => sub { 0 } );
 has freqs     => ( is => 'ro', default => sub { 0 } );
 has interval  => ( is => 'ro', default => sub { 0 } );
+has integer   => ( is => 'ro', default => sub { 0 } );
 has justin    => ( is => 'ro', default => sub { 0 } );
 has prime     => ( is => 'ro', default => sub { 0 } );
 has rootless  => ( is => 'ro', default => sub { 0 } );
@@ -53,6 +54,10 @@ has _ratio_name_index => ( is => 'ro', lazy => 1, default => sub { my $self = sh
             name   => $Music::Intervals::Ratios::ratio->{$_}{name} }
         } keys %$Music::Intervals::Ratios::ratio } },
 );
+has tonic_frequency => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
+        return $self->concert * (2 ** (1 / $self->semitones)) ** (-9) # XXX Hardcoding: 9th key above middle-C
+    },
+);
 
 has chord_names => ( is => 'rw', default => sub { {} } );
 has natural_frequencies => ( is => 'rw', default => sub { {} } );
@@ -62,12 +67,11 @@ has natural_prime_factors => ( is => 'rw', default => sub { {} } );
 has eq_tempered_frequencies => ( is => 'rw', default => sub { {} } );
 has eq_tempered_intervals => ( is => 'rw', default => sub { {} } );
 has eq_tempered_cents => ( is => 'rw', default => sub { {} } );
+has integer_notation => ( is => 'rw', default => sub { {} } );
 
 sub process
 {
     my $self = shift;
-
-    my %x;
 
     my $iter = combinations( $self->notes, $self->size );
     while (my $c = $iter->next)
@@ -86,6 +90,15 @@ sub process
             $self->chord_names->{"@$c chord_names"} = \@chordname if @chordname;
         }
 
+        if ( $self->integer )
+        {
+            $self->integer_notation->{"@$c integer_notation"} = {
+                map { $_ => 
+                    sprintf '%0.f', 69 + $self->semitones * log( ($self->tonic_frequency * (eval $self->_ratio_index->{$_})) / $self->concert ) / log(2)
+                } @$c
+            };
+        }
+
         if ( $self->justin )
         {
             if ( $self->freqs )
@@ -93,7 +106,7 @@ sub process
                 $self->natural_frequencies->{"@$c natural_frequencies"} = {
                     map {
                         $_ => {
-                            $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name}
+                             $self->tonic_frequency * eval $self->_ratio_index->{$_} => { $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name} }
                         }
                     } @$c
                 };
@@ -122,7 +135,7 @@ sub process
                 $self->natural_prime_factors->{"@$c natural_prime_factors"} = {
                     map {
                         $_ => {
-                            $dyads{$_}->{natural} => scalar ratio_factorize( $dyads{$_}->{natural} )
+                            $dyads{$_}->{natural} => ratio_factorize( $dyads{$_}->{natural} )
                         }
                     } keys %dyads
                 };
@@ -176,7 +189,7 @@ sub dyads
         # Calculate both natural and equal temperament values for our ratio.
         $dyads{"@$i"} = {
             natural => $fraction->to_string(),
-            # The value is either the known pitch ratio or the numerical evaluation of the fraction.
+            # The value is either the known pitch ratio or ...
             eq_tempered =>
               ( name2freq( $i->[1] . $self->octave ) || ( $self->concert * $self->_note_index->{ $i->[1] } ) )
                 /
@@ -194,12 +207,10 @@ sub ratio_factorize {
     $numerator   = [ prime_factors($numerator) ];
     $denominator = [ prime_factors($denominator) ];
 
-    return wantarray
-        ? ( $numerator, $denominator )
-        : sprintf( '(%s) / (%s)',
-            join( '*', @$numerator ),
-            join( '*', @$denominator )
-        );
+    return sprintf( '(%s) / (%s)',
+        join( '*', @$numerator ),
+        join( '*', @$denominator )
+    );
 }
 
 
@@ -230,7 +241,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0402
+version 0.05
 
 =head1 SYNOPSIS
 
