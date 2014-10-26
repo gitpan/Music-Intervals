@@ -5,7 +5,7 @@ BEGIN {
 # ABSTRACT: Mathematical breakdown of musical intervals
 use strict;
 use warnings;
-our $VERSION = '0.0501';
+our $VERSION = '0.0502';
 
 use Moo;
 use Algorithm::Combinatorics qw( combinations );
@@ -28,6 +28,7 @@ has justin    => ( is => 'ro', default => sub { 0 } );
 has prime     => ( is => 'ro', default => sub { 0 } );
 has rootless  => ( is => 'ro', default => sub { 0 } );
 has octave    => ( is => 'ro', default => sub { 4 } );
+has midikey   => ( is => 'ro', default => sub { 69 } );
 has concert   => ( is => 'ro', default => sub { 440 } );
 has size      => ( is => 'ro', default => sub { 3 } );
 has tonic     => ( is => 'ro', default => sub { 'C' } );
@@ -35,13 +36,13 @@ has semitones => ( is => 'ro', default => sub { 12 } );
 has temper    => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     $self->semitones * 100 / log(2) },
 );
-has notes     => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
+has notes => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     return [ get_scale_notes( $self->tonic ) ] },
 );
-has scale     => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
+has scale => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     return [ map { eval "$Music::Intervals::Ratios::ratio->{$_}{ratio}" } @{ $self->notes } ] },
 );
-has _note_index  => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
+has _note_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
     return { map { $_ => eval "$Music::Intervals::Ratios::ratio->{$_}{ratio}" } @{ $self->notes } } },
 );
 has _ratio_index => ( is => 'ro', lazy => 1, default => sub { my $self = shift;
@@ -94,7 +95,7 @@ sub process
         {
             $self->integer_notation->{"@$c integer_notation"} = {
                 map { $_ => 
-                    sprintf '%0.f', 69 + $self->semitones * log( ($self->tonic_frequency * (eval $self->_ratio_index->{$_})) / $self->concert ) / log(2)
+                    sprintf '%.0f', $self->midikey + $self->semitones * log( ($self->tonic_frequency * (eval $self->_ratio_index->{$_})) / $self->concert ) / log(2)
                 } @$c
             };
         }
@@ -106,7 +107,7 @@ sub process
                 $self->natural_frequencies->{"@$c natural_frequencies"} = {
                     map {
                         $_ => {
-                             $self->tonic_frequency * eval $self->_ratio_index->{$_} => { $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name} }
+                             sprintf('%.3f', $self->tonic_frequency * eval $self->_ratio_index->{$_}) => { $self->_ratio_index->{$_} => $Music::Intervals::Ratios::ratio->{$_}{name} }
                         }
                     } @$c
                 };
@@ -241,7 +242,7 @@ Music::Intervals - Mathematical breakdown of musical intervals
 
 =head1 VERSION
 
-version 0.0501
+version 0.0502
 
 =head1 SYNOPSIS
 
